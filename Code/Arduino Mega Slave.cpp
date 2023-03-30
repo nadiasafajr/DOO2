@@ -4,7 +4,8 @@
       
 
 //[1] Deklarasi Relay (ON/OFF Pompa)
-      const int relayPin = 4;
+      const int relayPin1 = 4;
+      const int relayPin2 = 5;
 
 //[2] Deklarasi Motor Stepper Valve
       #define dirPin 6 // pin yang terhubung ke DIR+ motor driver
@@ -80,10 +81,10 @@ void loop()
       {
         char command = Serial2.read();
         if (command == '1') {             
-          digitalWrite(relayPin, LOW); // PUMP ON
+          digitalWrite(relayPin1, LOW); // PUMP ON
         }
         else if (command == '0') {      
-          digitalWrite(relayPin, HIGH); // PUMP OFF
+          digitalWrite(relayPin1, HIGH); // PUMP OFF
         }
        }
        if (Serial1.available() >= sizeof(float)) { // Menerima setpoint dari master
@@ -150,7 +151,9 @@ void loop()
       delay(100);                   //delay output_PID dipakai
       stepper.moveTo(step_valve);   //beri target 360*
       stepper.runToPosition();      //jalankan
-
+      if(stepper.runToPosition()){
+            digitalWrite(relayPin2, LOW); //Fan ON
+      }
       //analogWrite(3, output_PID); 
 
 //[7] Menampilkan tinggi dan flow air
