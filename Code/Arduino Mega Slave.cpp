@@ -87,11 +87,7 @@ void loop()
           digitalWrite(relayPin1, HIGH); // PUMP OFF
         }
        }
-       if (Serial1.available() >= sizeof(float)) { // Menerima setpoint dari master
-          float set_point;
-          Serial1.readBytes((byte*)&set_point, sizeof(set_point));
-          Serial1.print("Setpoint diterima: " + String(set_point)); // Menampilkan setpoint di serial monitor
-          // Lakukan sesuatu dengan setpoint yang diterima, misalnya mengatur suhu
+       
         }      
 //[2] Perhitungan Sensor Ultra
       digitalWrite(triggerPin, LOW);
