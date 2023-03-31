@@ -46,8 +46,8 @@
 void setup() {
 //[0] Setup komunikasi serial
       Serial.begin(9600); //Baund rate Serial
-      Serial1.begin(9600); //Baud rate Serial 1(Mengirim data) 
-      Serial2.begin(9600); // Baud rate Serial 2 (Menerima data)
+      Serial2.begin(9600); //Baud rate Serial 1(Mengirim data) 
+      Serial3.begin(9600); // Baud rate Serial 2 (Menerima data)
       Serial.print("Setpoint = "); Serial.println (set_point);  //Serial awal memperlihatkan set point
 
 //[1] Setup Relay
@@ -77,9 +77,9 @@ void setup() {
 void loop()
 { 
 //[1] ON/OFF pompa-->serial monitor-->relay
-      if (Serial2.available() > 0) 
+      if (Serial3.available() ) 
       {
-        char command = Serial2.read();
+        char command = Serial3.read();
         if (command == '1') {             
           digitalWrite(relayPin1, LOW); // PUMP ON
         }
@@ -153,11 +153,11 @@ void loop()
       //analogWrite(3, output_PID); 
 
 //[7] Menampilkan tinggi dan flow air
-      Serial1.print("Waterlevel: ");
-      Serial1.print(tinggi);
-      Serial1.print(",");
-      Serial1.print(" Flow: ");
-      Serial1.print(literPermenit); 
+      Serial2.print("Waterlevel: ");
+      Serial2.print(tinggi);
+      Serial2.print(",");
+      Serial2.print(" Flow: ");
+      Serial2.print(literPermenit); 
       delay(300);   
       //seluruh kejadian di void loop delay selama 300ms
 }
