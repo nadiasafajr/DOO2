@@ -19,4 +19,12 @@ void loop() {
       Serial3.println('0'); // send "0" as a string     
     }
   }
+
+if (Serial2.available()>0){
+  String data = Serial2.readStringUntil('\n');
+  int separatorIndex = data.indexOf(',');
+  int tinggi = data.substring(11, separatorIndex).toInt();
+  int literPermenit = data.substring(separatorIndex + 5).toInt();
+
+  }
 }
