@@ -26,5 +26,8 @@ if (Serial2.available()>0){
   int tinggi = data.substring(11, separatorIndex).toInt();
   int literPermenit = data.substring(separatorIndex + 5).toInt();
 
-  }
+Serial.print("Waterlevel: ");
+Serial.println(tinggi);
+Serial.print(" Flow: ");
+Serial.println(literPermenit);  }
 }
