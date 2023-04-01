@@ -88,7 +88,7 @@ void loop()
         }
        }
        
-        }      
+             
 //[2] Perhitungan Sensor Ultra
       digitalWrite(triggerPin, LOW);
       delayMicroseconds(2);
@@ -153,12 +153,13 @@ void loop()
       //analogWrite(3, output_PID); 
 
 //[7] Menampilkan tinggi dan flow air
-      Serial2.print("Waterlevel: ");
-      Serial2.print(tinggi);
-      Serial2.print(",");
-      Serial2.print(" Flow: ");
-      Serial2.print(literPermenit); 
-      delay(300);   
-      //seluruh kejadian di void loop delay selama 300ms
+            Serial2.print("Waterlevel: ");
+            Serial2.print(tinggi);
+            Serial2.print(",");
+            Serial2.print(" Flow: ");
+            Serial2.println(literPermenit); 
+            delay(300);   
+            //seluruh kejadian di void loop delay selama 300ms
 }
+
       
