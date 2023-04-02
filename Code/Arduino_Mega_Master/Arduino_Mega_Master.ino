@@ -8,27 +8,24 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (Serial.available() > 0) {
+  if (Serial.available()) {
+    // read user input from computer
     char command = Serial.read();
-    if (command == '1') {             
-      Serial3.print('1'); // send "1" as a string
-    }
-    else if (command == '0') { 
-      Serial3.print('0'); // send "0" as a string     
-    }
+
+    // send command to slave using Serial2
+    Serial3.write(command);
   }
 
-if (Serial2.available() > 0) {
-    String data = Serial2.readStringUntil('\n');
-    int separatorIndex = data.indexOf(',');
-    if (separatorIndex != -1) {
-      int tinggi = data.substring(1, separatorIndex).toInt();
-      int literPermenit = data.substring(separatorIndex + 1).toInt();
-      Serial.print("Water level: ");
-      Serial.println(tinggi);
-      Serial.print("Flow: ");
-      Serial.println(literPermenit);
-    }
+if (Serial2.available()) {
+    // read and print distance data from ultrasonic sensor on slave
+    long distance = Serial2.parseInt();
+    Serial.print("Distance: ");
+    Serial.println(tinggi);
+
+    // read and print flow rate data from flow sensor on slave
+    int flowRate = Serial2.parseInt();
+    Serial.print("Flow rate: ");
+    Serial.println(literPermenit);
   }
 delay(300);
 }
