@@ -153,13 +153,11 @@ void loop()
       //analogWrite(3, output_PID); 
 
 //[7] Menampilkan tinggi dan flow air
-            Serial2.print("Waterlevel: ");
+            // Serial2.print("Waterlevel: ");
             Serial2.print(tinggi);
             Serial2.print(",");
-            Serial2.print(" Flow: ");
+            // Serial2.print(" Flow: ");
             Serial2.println(literPermenit); 
-            delay(300);   
+            delay(300); 
             //seluruh kejadian di void loop delay selama 300ms
 }
-
-      
