@@ -22,7 +22,7 @@ if (Serial2.available() > 0) {
     String data = Serial2.readStringUntil('\n');
     int separatorIndex = data.indexOf(',');
     if (separatorIndex != -1) {
-      int tinggi = data.substring(11, separatorIndex).toInt();
+      int tinggi = data.substring(1, separatorIndex).toInt();
       int literPermenit = data.substring(separatorIndex + 1).toInt();
       Serial.print("Water level: ");
       Serial.println(tinggi);
