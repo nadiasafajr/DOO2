@@ -154,8 +154,8 @@ void loop()
 
 //[7] Menampilkan tinggi dan flow air
             // Serial2.print("Waterlevel: ");
-            Serial2.print(tinggi);
-            Serial2.print(",");
+            Serial2.println(tinggi);
+            // Serial2.print(",");
             // Serial2.print(" Flow: ");
             Serial2.println(literPermenit); 
             delay(300); 
