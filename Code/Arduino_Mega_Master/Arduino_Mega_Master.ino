@@ -12,20 +12,28 @@ void loop() {
     // read user input from computer
     char command = Serial.read();
 
-    // send command to slave using Serial2
-    Serial3.write(command);
+    // send command to slave using Serial3
+    Serial3.print(command);
   }
 
 if (Serial2.available()) {
-    // read and print distance data from ultrasonic sensor on slave
-    long distance = Serial2.parseInt();
-    Serial.print("Distance: ");
-    Serial.println(tinggi);
+    //int tinggi = Serial2.parseInt();
+    //Serial.print("Distance: ");
+    //Serial.print(tinggi);
 
     // read and print flow rate data from flow sensor on slave
-    int flowRate = Serial2.parseInt();
-    Serial.print("Flow rate: ");
+    //int literPermenit = Serial2.parseInt();
+    //Serial.print("Flow rate: ");
+    //Serial.println(literPermenit);
+
+    String data = Serial2.readStringUntil('\n');
+    
+    // Pisahkan data menjadi nilai jarak dan aliran
+    int separatorIndex = data.indexOf(',');
+    int tinggi; //= data.substring(1,separatorIndex).toInt();
+    int literPermenit = data.substring(separatorIndex + 1).toInt();
+    Serial.print(tinggi);
     Serial.println(literPermenit);
+
   }
-delay(300);
 }
