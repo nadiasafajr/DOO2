@@ -30,7 +30,8 @@ void cacahPulsa()
 
 void setup() {
   Serial.begin(9600);
-  mySerial.begin(9600);
+  Serial2.begin(9600);
+  Serial3.begin(9600);
   stepper.setMaxSpeed(1000); // atur kecepatan, dapat docoba dirubah untuk latihan
   stepper.setAcceleration(500); // nilai akselerasi / percepatan, dapat docoba dirubah untuk latihan
   pinMode(buzzer,OUTPUT);
@@ -86,14 +87,19 @@ void loop() {
     pulsa_sensor = 0;
 
   }
-  //Serial.print("Waterlevel: "); Serial.print(tinggi); Serial.print(" cm\t");
-  //Serial.print(" Flow: "); Serial.print(literPermenit); Serial.println(" L/men");
-  mySerial.println("Waterlevel: "+String(tinggi)+"cm");
-  mySerial.println("Flow: "+String(literPermenit)+"L/men");
+  //Serial.print("Waterlevel: "); 
+  Serial2.println(tinggi); 
+  Serial.println(tinggi); 
+  //Serial.print(" cm\t");
+//  Serial.print(",");
+  //Serial.print(" Flow: "); 
+//  Serial2.println(literPermenit); 
+  //Serial.println(" L/men");
+  
   delay(300);
   //mengaktifkan pompa dengan serial monitor
-  if (Serial.available() > 0) {
-    char command = Serial.read();
+  if (Serial3.available()) {
+    char command = Serial3.read();
 
     if (command == '1') {
       digitalWrite(relayPin, LOW); // Pump On
