@@ -12,7 +12,7 @@ void loop() {
     char command = Serial.read();
 
     // send command to slave using Serial3
-    Serial3.print(command);
+    Serial3.print(command); 
   }
 
 if (Serial2.available()>0) {
@@ -27,9 +27,9 @@ if (Serial2.available()>0) {
     
     // Print water level, flow rate and PID values
     Serial.print("Water level: ");
-    Serial.println(tinggi);
+    Serial.print(tinggi);
     Serial.print("Flow rate: ");
-    Serial.println(literPermenit);
+    Serial.print(literPermenit);
     Serial.print("PID: ");
     Serial.println(output_PID);
   }
