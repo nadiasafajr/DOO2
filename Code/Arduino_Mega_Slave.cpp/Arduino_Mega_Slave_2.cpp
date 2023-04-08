@@ -8,7 +8,7 @@ const int relayPin2 = 5;
 const int triggerPin = 12;
 const int echoPin = 13;
 const int buzzer = 9;
-volatile int pulsa_sensor; // Cekflow
+volatile int pulsa_sensor; 
 float literPerjam, literPermenit;
 unsigned char pinFlowsensor = 2;
 unsigned long waktuAktual;
@@ -87,10 +87,10 @@ void loop()
     {              // jika sudah mencapai batas pembacaan
         index = 0; // kembali ke indeks pertama
     }
-    average = total / 5; // menghitung rata-rata
+    average = total / 5; // Menghitung rata-rata sensor ultrasonic
     tinggi = 49 - average;
 
-    waktuAktual = millis(); // waterflow
+    waktuAktual = millis(); // FlowMeter
     if (waktuAktual >= (waktuLoop + 1000))
     {
         waktuLoop = waktuAktual;
@@ -125,7 +125,7 @@ void loop()
     float y = 200 * x + 3000;
     step_valve = y;
 
-    //[6] PID control bukaan valve
+    //[6] PID control bukaan valvels
     delay(100);                 // delay output_PID dipakai
     stepper.moveTo(step_valve); // beri target 360*
     stepper.runToPosition();    // jalankan
@@ -148,6 +148,7 @@ void loop()
             digitalWrite(relayPin2, HIGH); // Pump Off
         }
     }
+    // Sent Data to Arduino Master
     Serial2.print("Waterlevel: ");
     Serial2.print(tinggi);
     Serial2.print(",");
