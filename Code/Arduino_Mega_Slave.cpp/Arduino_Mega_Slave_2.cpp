@@ -1,14 +1,17 @@
-#include <AccelStepper.h>
-#define dirPin 6  // pin yang terhubung ke DIR+ motor driver
-#define stepPin 8 // pin yang terhubung ke PUL+ motor driver
-AccelStepper stepper = AccelStepper(1, stepPin, dirPin);
+#define dirPin 6               // pin yang terhubung ke DIR+ motor driver
+#define stepPin 8              // pin yang terhubung ke PUL+ motor driver
+#define stepsPerRevolution 800 // sesuaikan dengan settingan SW1-SW3 pada modul motor driver
 float step_valve;
+int currentPosition = 0;
+int direction = 0;
+
 const int relayPin1 = 4;
 const int relayPin2 = 5;
+
 const int triggerPin = 12;
 const int echoPin = 13;
-const int buzzer = 9;
-volatile int pulsa_sensor; 
+
+volatile int pulsa_sensor;
 float literPerjam, literPermenit;
 unsigned char pinFlowsensor = 2;
 unsigned long waktuAktual;
@@ -40,25 +43,28 @@ void setup()
     Serial.begin(9600);
     Serial2.begin(9600);
     Serial3.begin(9600);
-    stepper.setMaxSpeed(1000);    // atur kecepatan, dapat docoba dirubah untuk latihan
-    stepper.setAcceleration(500); // nilai akselerasi / percepatan, dapat docoba dirubah untuk latihan
-    pinMode(buzzer, OUTPUT);
-    tone(buzzer, 2500);
-    delay(1500);
-    noTone(buzzer);
+
+    pinMode(stepPin, OUTPUT);
+    pinMode(dirPin, OUTPUT);
+    currentPosition = 0;
+
     randomSeed(analogRead(0));
     // myStepper.setSpeed(60); // set kecepatan motor stepper
     pinMode(triggerPin, OUTPUT);
     pinMode(echoPin, INPUT);
+
     pinMode(relayPin1, OUTPUT);
     pinMode(relayPin2, OUTPUT);
+
     digitalWrite(relayPin1, LOW);
     digitalWrite(relayPin2, LOW);
+
     for (int i = 0; i < readings[i]; i++)
     {
         readings[i] = 0;
     }
     total = 0;
+
     pinMode(pinFlowsensor, INPUT);
     digitalWrite(pinFlowsensor, HIGH);
     attachInterrupt(0, cacahPulsa, RISING);
@@ -99,6 +105,7 @@ void loop()
         pulsa_sensor = 0;
     }
     delay(300);
+
     error = set_point - tinggi;
     integral_error += error;              // atau: error*0.1 (time sampling)
     derivatif_error = error - last_error; // atau: (error-last_error)/0.1
@@ -126,15 +133,28 @@ void loop()
     step_valve = y;
 
     //[6] PID control bukaan valvels
-    delay(100);                 // delay output_PID dipakai
-    stepper.moveTo(step_valve); // beri target 360*
-    stepper.runToPosition();    // jalankan
-    while (stepper.runToPosition())
+    if (step_valve > currentPosition)
     {
-        digitalWrite(relayPin2, LOW); // Fan ON
+        direction = 1;
     }
-    // analogWrite(3, output_PID);
-    // mengaktifkan pompa dengan serial monitor
+    else if (step_valve < currentPosition)
+    {
+        direction = -1;
+    }
+
+    // Move the motor one step in the appropriate direction
+    for (int i = 0; i < step_valve; i++)
+    {
+        digitalWrite(dirPin, direction);
+        digitalWrite(stepPin, HIGH);
+        delayMicroseconds(500);
+        digitalWrite(stepPin, LOW);
+        delayMicroseconds(500);
+
+        // Update the current position
+        currentPosition += direction;
+    }
+
     if (Serial3.available())
     {
         char command = Serial3.read();
