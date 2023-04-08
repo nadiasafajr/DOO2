@@ -11,12 +11,11 @@ const int relayPin2 = 5;
 const int triggerPin = 12;
 const int echoPin = 13;
 
-volatile int pulsa_sensor;
-float literPerjam, literPermenit;
-unsigned char pinFlowsensor = 2;
-unsigned long waktuAktual;
-unsigned long waktuLoop;
-double liter;
+const int sensorPin = 2;      // attach flow meter to digital pin 2
+volatile int pulseCount;      // count pulses from flow meter
+float literPermenit;               // calculated flow rate
+unsigned int flowMilliLitres; // total accumulated flow
+unsigned long oldTime;
 
 int readings[5]; // array untuk menyimpan 5 pembacaan
 int index = 0;   // indeks untuk menandai pembacaan saat ini
@@ -33,9 +32,9 @@ float error, integral_error, derivatif_error;
 float last_error = 0;
 float output_PID;
 
-void cacahPulsa()
+void pulseCounter()
 {
-    pulsa_sensor++;
+    pulseCount++;
 }
 
 void setup()
@@ -65,12 +64,11 @@ void setup()
     }
     total = 0;
 
-    pinMode(pinFlowsensor, INPUT);
-    digitalWrite(pinFlowsensor, HIGH);
-    attachInterrupt(0, cacahPulsa, RISING);
-    sei();
-    waktuAktual = millis();
-    waktuLoop = waktuAktual;
+    attachInterrupt(0, pulseCounter, FALLING); // configure interrupt
+    pulseCount = 0;                            // reset pulse count
+    literPermenit = 0.0;                            // initialize flow rate
+    flowMilliLitres = 0;                       // initialize total accumulated flow
+    oldTime = 0;
 }
 
 void loop()
@@ -96,13 +94,15 @@ void loop()
     average = total / 5; // Menghitung rata-rata sensor ultrasonic
     tinggi = 49 - average;
 
-    waktuAktual = millis(); // FlowMeter
-    if (waktuAktual >= (waktuLoop + 1000))
+    unsigned long currentTime = millis();
+    if (currentTime - oldTime > 1000) // update every 1 second
     {
-        waktuLoop = waktuAktual;
-        literPerjam = (pulsa_sensor * 60 / 7.5);
-        literPermenit = literPerjam / 60;
-        pulsa_sensor = 0;
+        detachInterrupt(0);                        // disable interrupt
+        literPermenit = pulseCount / 5.5;               // convert pulse count to flow rate (L/min)
+        flowMilliLitres += (literPermenit / 60) * 1000; // calculate total accumulated flow (mL)
+        pulseCount = 0;                            // reset pulse count
+        oldTime = currentTime;                     // save current time
+        attachInterrupt(0, pulseCounter, FALLING); // enable interrupt
     }
     delay(300);
 
