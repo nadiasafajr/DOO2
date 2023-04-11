@@ -9,7 +9,7 @@ const int relayPin1 = 4;
 const int relayPin2 = 5;
 
 const int triggerPin = 12;
-const int echoPin = 13;
+const int echoPin = 13;  
 
 const int sensorPin = 2;      // attach flow meter to digital pin 2
 volatile int pulseCount;      // count pulses from flow meter
@@ -74,7 +74,7 @@ void setup()
 void loop()
 {
 
-    long duration, distance, tinggi;
+    long duration, distance1,distance, tinggi;
     digitalWrite(triggerPin, LOW);
     delayMicroseconds(2);
     digitalWrite(triggerPin, HIGH);
@@ -82,6 +82,7 @@ void loop()
     digitalWrite(triggerPin, LOW);
     duration = pulseIn(echoPin, HIGH);
     distance = duration * 0.034 / 2;
+    distance = (distance1 - 0.4393)/0.9536;
     total = total - readings[index]; // mengurangi pembacaan lama
     readings[index] = distance;      // menambahkan pembacaan baru
     total = total + readings[index]; // menambahkan pembacaan baru
