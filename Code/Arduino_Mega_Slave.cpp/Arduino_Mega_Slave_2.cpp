@@ -9,32 +9,33 @@ const int relayPin1 = 4;
 const int relayPin2 = 5;
 
 const int triggerPin = 12;
-const int echoPin = 13;  
+const int echoPin = 13;
 
-const int sensorPin = 2;      // attach flow meter to digital pin 2
-volatile int pulseCount;      // count pulses from flow meter
-float literPermenit;               // calculated flow rate
-unsigned int flowMilliLitres; // total accumulated flow
-unsigned long oldTime;
+volatile int pulsa_sensor; 
+float literPerjam, literPermenit;
+unsigned char pinFlowsensor = 2;
+unsigned long waktuAktual;
+unsigned long waktuLoop;
+double liter;
 
 int readings[5]; // array untuk menyimpan 5 pembacaan
 int index = 0;   // indeks untuk menandai pembacaan saat ini
-int total = 0;   // total dari semua pembacaan
-int average = 0; // rata-rata dari pembacaan
+int total = 0;   
+int average = 0; 
 char userInput;
 int data = 0;
 
-float Kp = 1.0;       // Initial Proportional Gain
-float Ki = 0.1;       // Initial Integral Gain
-float Kd = 0.01;      // Intitial Derivative Gain
-float set_point = 40; // Ketinggian dinginkan = 40cm
+float Kp = 1.0;      
+float Ki = 0.1;       
+float Kd = 0.01;      
+float set_point = 40; 
 float error, integral_error, derivatif_error;
 float last_error = 0;
 float output_PID;
 
-void pulseCounter()
+void cacahPulsa()
 {
-    pulseCount++;
+    pulsa_sensor++;
 }
 
 void setup()
@@ -46,9 +47,8 @@ void setup()
     pinMode(stepPin, OUTPUT);
     pinMode(dirPin, OUTPUT);
     currentPosition = 0;
-
     randomSeed(analogRead(0));
-    // myStepper.setSpeed(60); // set kecepatan motor stepper
+
     pinMode(triggerPin, OUTPUT);
     pinMode(echoPin, INPUT);
 
@@ -58,23 +58,23 @@ void setup()
     digitalWrite(relayPin1, LOW);
     digitalWrite(relayPin2, LOW);
 
+    pinMode(pinFlowsensor, INPUT);
+    digitalWrite(pinFlowsensor, HIGH);
+    attachInterrupt(0, cacahPulsa, RISING);
+    sei();
+    waktuAktual = millis();
+    waktuLoop = waktuAktual;
+
     for (int i = 0; i < readings[i]; i++)
     {
         readings[i] = 0;
     }
     total = 0;
-
-    attachInterrupt(0, pulseCounter, FALLING); // configure interrupt
-    pulseCount = 0;                            // reset pulse count
-    literPermenit = 0.0;                            // initialize flow rate
-    flowMilliLitres = 0;                       // initialize total accumulated flow
-    oldTime = 0;
 }
 
 void loop()
 {
-
-    long duration, distance1,distance, tinggi;
+    long duration, distance1, distance, tinggi;
     digitalWrite(triggerPin, LOW);
     delayMicroseconds(2);
     digitalWrite(triggerPin, HIGH);
@@ -82,7 +82,7 @@ void loop()
     digitalWrite(triggerPin, LOW);
     duration = pulseIn(echoPin, HIGH);
     distance = duration * 0.034 / 2;
-    distance = (distance1 - 0.4393)/0.9536;
+    distance = (distance1 - 0.4393) / 0.9536;
     total = total - readings[index]; // mengurangi pembacaan lama
     readings[index] = distance;      // menambahkan pembacaan baru
     total = total + readings[index]; // menambahkan pembacaan baru
@@ -95,15 +95,13 @@ void loop()
     average = total / 5; // Menghitung rata-rata sensor ultrasonic
     tinggi = 49 - average;
 
-    unsigned long currentTime = millis();
-    if (currentTime - oldTime > 1000) // update every 1 second
+    waktuAktual = millis(); // waterflow
+    if (waktuAktual >= (waktuLoop + 1000))
     {
-        detachInterrupt(0);                        // disable interrupt
-        literPermenit = pulseCount / 5.5;               // convert pulse count to flow rate (L/min)
-        flowMilliLitres += (literPermenit / 60) * 1000; // calculate total accumulated flow (mL)
-        pulseCount = 0;                            // reset pulse count
-        oldTime = currentTime;                     // save current time
-        attachInterrupt(0, pulseCounter, FALLING); // enable interrupt
+        waktuLoop = waktuAktual;
+        literPerjam = (pulsa_sensor * 60 / 5.5);
+        literPermenit = literPerjam / 60;
+        pulsa_sensor = 0;
     }
     delay(300);
 
@@ -128,12 +126,10 @@ void loop()
         output_PID = output_PID;
     }
 
-    //[5] Regresi Flow & Step valve
     float x = output_PID;
     float y = 200 * x + 3000;
     step_valve = y;
 
-    //[6] PID control bukaan valvels
     if (step_valve > currentPosition)
     {
         direction = 1;
