@@ -47,7 +47,6 @@ void setup()
 
     pinMode(stepPin, OUTPUT);
     pinMode(dirPin, OUTPUT);
-    currentPosition = 0;
     randomSeed(analogRead(0));
 
     pinMode(triggerPin, OUTPUT);
