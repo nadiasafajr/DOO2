@@ -129,10 +129,9 @@ void loop()
 
     float x = output_PID;
     float y = 200 * x + 3000;
-    step_valve = y;
+    float step_valve = y;
 
     // membaca nilai variabel step_valve
-    float step_valve  // ganti dengan nilai variabel step_valve yang sesuai
     // mengubah nilai stepValve menjadi jumlah langkah motor
     int steps = (int)(step_valve * stepsPerRevolution) + 3000;
     // menggerakkan motor ke posisi yang diinginkan
