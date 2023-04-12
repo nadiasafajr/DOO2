@@ -1,9 +1,10 @@
-#define dirPin 6               // pin yang terhubung ke DIR+ motor driver
-#define stepPin 8              // pin yang terhubung ke PUL+ motor driver
-#define stepsPerRevolution 800 // sesuaikan dengan settingan SW1-SW3 pada modul motor driver
-float step_valve;
-int currentPosition = 0;
-int direction = 0;
+const int stepPin = 6;
+const int dirPin = 8;
+
+// inisialisasi variabel untuk mengontrol motor
+int stepsPerRevolution = 800; // jumlah langkah per putaran motor
+int motorSpeed = 100;         // kecepatan motor
+int motorPosition = 0;        // posisi motor saat ini
 
 const int relayPin1 = 4;
 const int relayPin2 = 5;
@@ -11,7 +12,7 @@ const int relayPin2 = 5;
 const int triggerPin = 12;
 const int echoPin = 13;
 
-volatile int pulsa_sensor; 
+volatile int pulsa_sensor;
 float literPerjam, literPermenit;
 unsigned char pinFlowsensor = 2;
 unsigned long waktuAktual;
@@ -20,15 +21,15 @@ double liter;
 
 int readings[5]; // array untuk menyimpan 5 pembacaan
 int index = 0;   // indeks untuk menandai pembacaan saat ini
-int total = 0;   
-int average = 0; 
+int total = 0;
+int average = 0;
 char userInput;
 int data = 0;
 
-float Kp = 1.0;      
-float Ki = 0.1;       
-float Kd = 0.01;      
-float set_point = 40; 
+float Kp = 1.0;
+float Ki = 0.1;
+float Kd = 0.01;
+float set_point = 40;
 float error, integral_error, derivatif_error;
 float last_error = 0;
 float output_PID;
@@ -130,27 +131,35 @@ void loop()
     float y = 200 * x + 3000;
     step_valve = y;
 
-    if (step_valve > currentPosition)
+    // membaca nilai variabel step_valve
+    float step_valve  // ganti dengan nilai variabel step_valve yang sesuai
+    // mengubah nilai stepValve menjadi jumlah langkah motor
+    int steps = (int)(step_valve * stepsPerRevolution) + 3000;
+    // menggerakkan motor ke posisi yang diinginkan
+    if (steps > motorPosition)
     {
-        direction = 1;
+        digitalWrite(dirPin, HIGH); // putaran searah jarum jam
+        for (int i = motorPosition; i < steps; i++)
+        {
+            digitalWrite(stepPin, HIGH);
+            delayMicroseconds(motorSpeed);
+            digitalWrite(stepPin, LOW);
+            delayMicroseconds(motorSpeed);
+        }
     }
-    else if (step_valve < currentPosition)
+    else
     {
-        direction = -1;
+        digitalWrite(dirPin, LOW); // putaran berlawanan jarum jam
+        for (int i = motorPosition; i > steps; i--)
+        {
+            digitalWrite(stepPin, HIGH);
+            delayMicroseconds(motorSpeed);
+            digitalWrite(stepPin, LOW);
+            delayMicroseconds(motorSpeed);
+        }
     }
-
-    // Move the motor one step in the appropriate direction
-    for (int i = 0; i < step_valve; i++)
-    {
-        digitalWrite(dirPin, direction);
-        digitalWrite(stepPin, HIGH);
-        delayMicroseconds(500);
-        digitalWrite(stepPin, LOW);
-        delayMicroseconds(500);
-
-        // Update the current position
-        currentPosition += direction;
-    }
+    // menyimpan posisi motor
+    motorPosition = steps;
 
     if (Serial3.available())
     {
