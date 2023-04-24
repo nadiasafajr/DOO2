@@ -132,7 +132,7 @@ void loop()
 
     // membaca nilai variabel step_valve
     // mengubah nilai stepValve menjadi jumlah langkah motor
-    int steps = (int)(step_valve * stepsPerRevolution) + 3000;
+    int steps = (int)(step_valve * stepsPerRevolution) + 3000;  //nilai offest yang diberikan ke steps 
     // menggerakkan motor ke posisi yang diinginkan
     if (steps > motorPosition)
     {
