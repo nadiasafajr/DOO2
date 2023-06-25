@@ -6,31 +6,29 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run   repeatedly:
+  // PUMP
   if (Serial.available ()>0) {
     // read user input from computer
     char command = Serial.read();
-
-    // send command to slave using Serial3
-    Serial3.print(command); 
-  }
-
+    if (command == '1')
+    { //ON
+      Serial3.println(command); 
+    }
+    else if (command == '0')
+    { //OFF
+      Serial3.println(command); 
+    }
+    else if (command == 'P')
+    { //PID
+      String input = Serial.readStringUntil('\n');
+      Serial1.println(input); 
+    }
+    }
+    
+//SENSOR
 if (Serial2.available()>0) {
-    String data = Serial.readStringUntil('\n');
-    
-    // Split data into water level, flow rate and PID values
-    int separatorIndex1 = data.indexOf(',');
-    int separatorIndex2 = data.indexOf(',', separatorIndex1 + 1);
-    int tinggi = data.substring(12, separatorIndex1).toInt();
-    int literPermenit = data.substring(separatorIndex1 + 8, separatorIndex2).toInt();
-    int output_PID = data.substring(separatorIndex2 + 6).toInt();
-    
-    // Print water level, flow rate and PID values
-    Serial.print("Water level: ");
-    Serial.print(tinggi);
-    Serial.print("Flow rate: ");
-    Serial.print(literPermenit);
-    Serial.print("PID: ");
-    Serial.println(output_PID);
+    String Data = Serial2.readStringUntil('\n');
+    Serial.println(Data);
   }
+  
 }
