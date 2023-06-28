@@ -164,31 +164,11 @@ void loop()
   if (Serial1.available() > 0)
   {
     char command = Serial1.read();
-    if (command == '2')
-    { while (command == '2') {
-        tangki_1();
-        if (Serial1.available() > 0)
-        {
-          command = Serial1.read();
-          if (command != '2')
-          {
-            break;
-          }
-        }
-      }
+    if (command == '2') {
+      tangki_1();
     }
-    if (command == '3')
-    { while (command == '3') {
-        tangki_2();
-        if (Serial1.available() > 0)
-        {
-          command = Serial1.read();
-          if (command != '3')
-          {
-            break;
-          }
-        }
-      }
+    else if (command == '3') {
+      tangki_2();
     }
   }
   if (Serial2.available() > 0)
@@ -238,31 +218,35 @@ double pid(double error)
   } return output_PID;
 }
 void tangki_1() {
-  double now = millis();
-  dt = (now - last_time) / 1000.00;
-  last_time = now;
-  double error = setPoint - tinggi;
-  output_PID = pid(error);
+  for (;;) {
+    double now = millis();
+    dt = (now - last_time) / 1000.00;
+    last_time = now;
+    double error = setPoint - tinggi;
+    output_PID = pid(error);
 
-  // Regresi Flow & Step valve
-  float x = output_PID;
-  float y = (-70) * x + 5400;
-  step_valve = constrain(y, 0, 5200);
-  stepper.moveTo(step_valve);
-  stepper.runToPosition();
+    // Regresi Flow & Step valve
+    float x = output_PID;
+    float y = (-70) * x + 5400;
+    step_valve = constrain(y, 0, 5200);
+    stepper.moveTo(step_valve);
+    stepper.runToPosition();
+  }
 }
 
 void tangki_2() {
-  double now = millis();
-  dt = (now - last_time) / 1000.00;
-  last_time = now;
-  double error = setPoint - tinggi2;
-  output_PID = pid(error);
+  for (;;) {
+    double now = millis();
+    dt = (now - last_time) / 1000.00;
+    last_time = now;
+    double error = setPoint - tinggi2;
+    output_PID = pid(error);
 
-  // Regresi Flow & Step valve
-  float x = output_PID;
-  float y = (-70) * x + 5400;
-  step_valve = constrain(y, 0, 5200);
-  stepper.moveTo(step_valve);
-  stepper.runToPosition();
+    // Regresi Flow & Step valve
+    float x = output_PID;
+    float y = (-70) * x + 5400;
+    step_valve = constrain(y, 0, 5200);
+    stepper.moveTo(step_valve);
+    stepper.runToPosition();
+  }
 }
