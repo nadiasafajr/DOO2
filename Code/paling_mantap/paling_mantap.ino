@@ -132,8 +132,6 @@ void loop()
     pulsa_sensor = 0;
   }
 
-
-
   //  SEND SENSOR DATA
   String Data = String(tinggi) + "," + String (tinggi2) + "," + String(literPermenit) + ","  + String(step_valve);
   Serial2.println(Data);
@@ -159,15 +157,40 @@ void loop()
     else if (command == '5')
     { step_valve -= 800;
       Serial.println("Menambah bukaan ke -800");
-    }    
-    while (command == '2')
-    { tangki_1();
-    }
-    while (command == '3')
-    { tangki_2();
     }
   }
 
+
+  if (Serial1.available() > 0)
+  {
+    char command = Serial1.read();
+    if (command == '3')
+    { while (command == '3') {
+        tangki_1();
+        if (Serial1.available() > 0)
+        {
+          command = Serial1.read();
+          if (command != '3')
+          {
+            break;
+          }
+        }
+      }
+    }
+    if (command == '4')
+    { while (command == '4') {
+        tangki_2();
+        if (Serial1.available() > 0)
+        {
+          command = Serial1.read();
+          if (command != '4')
+          {
+            break;
+          }
+        }
+      }
+    }
+  }
   if (Serial2.available() > 0)
   { input = Serial2.readStringUntil('\n'); // Membaca input dari Serial1 hingga newline character
     // Memanggil fungsi pemisahan nilai
@@ -177,7 +200,6 @@ void loop()
     Serial.print(kd);
     Serial.print(setPoint);
     Serial.print(step_valve);
-
   }
 }
 void splitValues(String input) {
