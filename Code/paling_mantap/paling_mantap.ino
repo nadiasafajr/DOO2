@@ -164,26 +164,26 @@ void loop()
   if (Serial1.available() > 0)
   {
     char command = Serial1.read();
-    if (command == '3')
-    { while (command == '3') {
+    if (command == '2')
+    { while (command == '2') {
         tangki_1();
         if (Serial1.available() > 0)
         {
           command = Serial1.read();
-          if (command != '3')
+          if (command != '2')
           {
             break;
           }
         }
       }
     }
-    if (command == '4')
-    { while (command == '4') {
+    if (command == '3')
+    { while (command == '3') {
         tangki_2();
         if (Serial1.available() > 0)
         {
           command = Serial1.read();
-          if (command != '4')
+          if (command != '3')
           {
             break;
           }
