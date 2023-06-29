@@ -224,7 +224,7 @@ void tangki_1() {
     last_time = now;
     double error = setPoint - tinggi;
     output_PID = pid(error);
-
+ 
     // Regresi Flow & Step valve
     float x = output_PID;
     float y = (-70) * x + 5400;
