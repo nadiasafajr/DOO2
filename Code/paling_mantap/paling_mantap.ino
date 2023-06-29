@@ -122,7 +122,7 @@ void loop()
   average2 = total2 / 5;
   tinggi2 = 33 - average2;
   constrain(tinggi, 0, 33);
-  // Flow Sensor Calc
+
   waktuAktual = millis();
   if (waktuAktual >= (waktuLoop + 1000))
   {
@@ -152,14 +152,11 @@ void loop()
     }
     else if (command == '4')
     { step_valve += 800;
-      Serial.println("Menambah tutupan ke 800");
     }
     else if (command == '5')
     { step_valve -= 800;
-      Serial.println("Menambah bukaan ke -800");
     }
   }
-
 
   if (Serial1.available() > 0)
   {
@@ -171,8 +168,9 @@ void loop()
       tangki_2();
     }
   }
+
   if (Serial2.available() > 0)
-  { input = Serial2.readStringUntil('\n'); // Membaca input dari Serial1 hingga newline character
+  { input = Serial2.readStringUntil('\n');
     // Memanggil fungsi pemisahan nilai
     splitValues(input);
     Serial.print(kp);
@@ -224,8 +222,7 @@ void tangki_1() {
     last_time = now;
     double error = setPoint - tinggi;
     output_PID = pid(error);
- 
-    // Regresi Flow & Step valve
+
     float x = output_PID;
     float y = (-70) * x + 5400;
     step_valve = constrain(y, 0, 5200);
@@ -242,7 +239,6 @@ void tangki_2() {
     double error = setPoint - tinggi2;
     output_PID = pid(error);
 
-    // Regresi Flow & Step valve
     float x = output_PID;
     float y = (-70) * x + 5400;
     step_valve = constrain(y, 0, 5200);
