@@ -167,9 +167,6 @@ void loop()
     else if (command == '3') {
       tangki_2();
     }
-    else {
-      break;
-    }
   }
 
   if (Serial2.available() > 0)
@@ -248,4 +245,5 @@ void tangki_2() {
     stepper.moveTo(step_valve);
     stepper.runToPosition();
   }
+
 }
