@@ -167,6 +167,9 @@ void loop()
     else if (command == '3') {
       tangki_2();
     }
+    else {
+      break;
+    }
   }
 
   if (Serial2.available() > 0)
